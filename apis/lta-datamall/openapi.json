@@ -68,10 +68,10 @@
                                             "$ref": "#/components/schemas/busArrivalv2NextBus"
                                         },
                                         "NextBus2": {
-                                            "$ref": "#/components/schemas/busArrivalV2NextBus"
+                                            "$ref": "#/components/schemas/busArrivalv2NextBus"
                                         },
                                         "NextBus3": {
-                                            "$ref": "#/components/schemas/busArrivalV2NextBus"
+                                            "$ref": "#/components/schemas/busArrivalv2NextBus"
                                         }
                                     },
                                     "additionalProperties": false

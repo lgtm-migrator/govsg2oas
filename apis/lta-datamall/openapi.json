@@ -73,7 +73,8 @@
                                         "NextBus3": {
                                             "$ref": "#/components/schemas/busArrivalV2NextBus"
                                         }
-                                    }
+                                    },
+                                    "additionalProperties": false
                                 }
                             }
                         }
@@ -87,24 +88,26 @@
                     "501": {
                         "description": "501 Internal server error is returned when invalid/no BusStopCode is sent.",
                         "content": {
-                            "odata.metadata": {
+                            "application/json": {
                                 "schema": {
-                                    "type": "string",
-                                    "enum": [
-                                        "http://datamall2.mytransport.sg/ltaodataservice/$metadata#BusArrivalv2/@Element"
-                                    ]
-                                }
-                            },
-                            "BusStopCode": {
-                                "schema": {
-                                    "type": "string",
-                                    "nullable": true
-                                }
-                            },
-                            "Services": {
-                                "schema": {
-                                    "type": "array",
-                                    "items": {}
+                                    "type": "object",
+                                    "properties": {
+                                        "odata.metadata": {
+                                            "type": "string",
+                                            "enum": [
+                                                "http://datamall2.mytransport.sg/ltaodataservice/$metadata#BusArrivalv2/@Element"
+                                            ]
+                                        },
+                                        "BusStopCode": {
+                                            "type": "string",
+                                            "nullable": true
+                                        },
+                                        "Services": {
+                                            "type": "array",
+                                            "items": {}
+                                        }
+                                    },
+                                    "additionalProperties": false
                                 }
                             }
                         }
@@ -129,10 +132,24 @@
         },
         "responses": {
             "default": {
-                "description": "400 Bad request is returned."
+                "description": "400 Bad request is returned.",
+                "content": {
+                    "text/plain": {
+                        "schema": {
+                            "additionalProperties": false
+                        }
+                    }
+                }
             },
             "401": {
-                "description": "401 Unauthorized is returned."
+                "description": "401 Unauthorized is returned.",
+                "content": {
+                    "text/plain": {
+                        "schema": {
+                            "additionalProperties": false
+                        }
+                    }
+                }
             }
         },
         "securitySchemes": {

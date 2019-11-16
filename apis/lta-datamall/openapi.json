@@ -1,0 +1,216 @@
+{
+    "$schema": "https://raw.githubusercontent.com/OAI/OpenAPI-Specification/master/schemas/v3.0/schema.json",
+    "openapi": "3.0.2",
+    "info": {
+        "title": "LTA DataMall",
+        "description": "LTA publishes a wide variety of land transport-related datasets (static and dynamic / real-time) on DataMall for enterprises, third-party developers, researchers, and other members of the public to promote collaboration and co-creation of innovative and inclusive transport solutions.",
+        "termsOfService": "https://www.mytransport.sg/content/mytransport/home/dataMall/api-terms-of-service.html",
+        "license": {
+            "name": "Singapore Open Data License 1.0",
+            "url": "https://www.mytransport.sg/content/mytransport/home/dataMall/SingaporeOpenDataLicence.html"
+        },
+        "version": "0.1.0"
+    },
+    "servers": [
+        {
+            "url": "http://datamall2.mytransport.sg/ltaodataservice"
+        }
+    ],
+    "externalDocs": {
+        "description": "Official LTA DataMall API documentation",
+        "url": "https://www.mytransport.sg/content/dam/datamall/datasets/LTA_DataMall_API_User_Guide.pdf"
+    },
+    "security": [
+        {
+            "default": []
+        }
+    ],
+    "paths": {
+        "/BusArrivalv2": {
+            "get": {
+                "summary": "Returns real-time Bus Arrival information of Bus Services at a queried Bus Stop, including Est. Arrival Time, Est. Current Location, Est. Current Load.",
+                "parameters": [
+                    {
+                        "$ref": "#/components/headers/accepts"
+                    },
+                    {
+                        "name": "BusStopCode",
+                        "in": "query",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "pattern": "[0-9]{5}",
+                            "example": "83139"
+                        }
+                    },
+                    {
+                        "name": "ServiceNo",
+                        "in": "query",
+                        "schema": {
+                            "type": "integer",
+                            "example": "15"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "A list of bus arrivals.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "ServiceNo": {
+                                            "type": "string",
+                                            "description": "Bus service number"
+                                        },
+                                        "NextBus": {
+                                            "$ref": "#/components/schemas/busArrivalv2NextBus"
+                                        },
+                                        "NextBus2": {
+                                            "$ref": "#/components/schemas/busArrivalV2NextBus"
+                                        },
+                                        "NextBus3": {
+                                            "$ref": "#/components/schemas/busArrivalV2NextBus"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/default"
+                    },
+                    "401": {
+                        "$ref": "#components/responses/401"
+                    },
+                    "501": {
+                        "description": "501 Internal server error is returned when invalid/no BusStopCode is sent.",
+                        "content": {
+                            "odata.metadata": {
+                                "schema": {
+                                    "type": "string",
+                                    "enum": [
+                                        "http://datamall2.mytransport.sg/ltaodataservice/$metadata#BusArrivalv2/@Element"
+                                    ]
+                                }
+                            },
+                            "BusStopCode": {
+                                "schema": {
+                                    "type": "string",
+                                    "nullable": true
+                                }
+                            },
+                            "Services": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {}
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "headers": {
+            "accepts": {
+                "description": "The response format of the API call",
+                "schema": {
+                    "type": "string",
+                    "enum": [
+                        "application/json",
+                        "application/atom+xml"
+                    ],
+                    "default": "application/json"
+                }
+            }
+        },
+        "responses": {
+            "default": {
+                "description": "400 Bad request is returned."
+            },
+            "401": {
+                "description": "401 Unauthorized is returned."
+            }
+        },
+        "securitySchemes": {
+            "default": {
+                "type": "apiKey",
+                "name": "AccountKey",
+                "in": "header"
+            }
+        },
+        "schemas": {
+            "busArrivalv2NextBus": {
+                "type": "object",
+                "properties": {
+                    "odata.metadata": {
+                        "type": "string",
+                        "enum": [
+                            "http://datamall2.mytransport.sg/ltaodataservice/$metadata#BusArrivalv2/@Element"
+                        ],
+                        "example": "http://datamall2.mytransport.sg/ltaodataservice/$metadata#BusArrivalv2/@Element"
+                    },
+                    "OriginCode": {
+                        "type": "string",
+                        "pattern": "[0-9]{5}",
+                        "example": "77009"
+                    },
+                    "DestinationCode": {
+                        "type": "string",
+                        "pattern": "[0-9]{5}",
+                        "example": "77131"
+                    },
+                    "EstimatedArrival": {
+                        "type": "string",
+                        "format": "date-time",
+                        "example": "2017-04-29T07:20:24+08:00"
+                    },
+                    "Latitude": {
+                        "type": "number",
+                        "format": "double",
+                        "example": "1.42117943692586"
+                    },
+                    "Longitude": {
+                        "type": "number",
+                        "format": "double",
+                        "example": "103.831477233098"
+                    },
+                    "VisitNumber": {
+                        "type": "integer",
+                        "example": "1"
+                    },
+                    "Load": {
+                        "type": "string",
+                        "enum": [
+                            "SEA",
+                            "SDA",
+                            "LSD"
+                        ],
+                        "example": "SEA"
+                    },
+                    "Feature": {
+                        "type": "string",
+                        "enum": [
+                            "",
+                            "WAB"
+                        ],
+                        "example": "WAB"
+                    },
+                    "Type": {
+                        "type": "string",
+                        "enum": [
+                            "SD",
+                            "DD",
+                            "BD"
+                        ],
+                        "example": "SD"
+                    }
+                },
+                "additionalProperties": false
+            }
+        }
+    }
+}

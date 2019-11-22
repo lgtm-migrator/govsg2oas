@@ -27,7 +27,7 @@ paths:
         Bus Stop, including Est. Arrival Time, Est. Current Location, Est. Current
         Load.
       parameters:
-        - "$ref": "#/components/parameters/accepts"
+        - "$ref": "#/components/parameters/accept"
         - name: BusStopCode
           in: query
           required: true
@@ -109,7 +109,7 @@ paths:
         "Returns detailed service information for all buses currently in operation,
         including: first stop, last stop, peak / offpeak frequency of dispatch."
       parameters:
-        - "$ref": "#/components/parameters/accepts"
+        - "$ref": "#/components/parameters/accept"
       responses:
         "200":
           description: List of bus services.
@@ -178,11 +178,14 @@ paths:
                     description: Location at which the bus service loops; empty if not a loop service.
                     type: string
                     example: "Raffles Blvd"
-
+        "400":
+          "$ref": "#/components/responses/default"
+        "401":
+          "$ref": "#/components/responses/401"
 components:
   parameters:
-    accepts:
-      name: accepts
+    accept:
+      name: accept
       in: header
       description:
         The response format of the API call. Any invalid value will fallback
@@ -199,12 +202,16 @@ components:
       content:
         text/plain:
           schema:
+            type: string
+            example:
             additionalProperties: false
     default:
       description: 400 Bad request is returned.
       content:
         text/plain:
           schema:
+            type: string
+            example:
             additionalProperties: false
   securitySchemes:
     default:

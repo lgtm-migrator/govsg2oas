@@ -1,0 +1,286 @@
+---
+openapi: 3.0.2
+info:
+  title: LTA DataMall
+  description:
+    LTA publishes a wide variety of land transport-related datasets (static
+    and dynamic / real-time) on DataMall for enterprises, third-party developers,
+    researchers, and other members of the public to promote collaboration and co-creation
+    of innovative and inclusive transport solutions.
+  termsOfService: https://www.mytransport.sg/content/mytransport/home/dataMall/api-terms-of-service.html
+  license:
+    name: Singapore Open Data License 1.0
+    url: https://www.mytransport.sg/content/mytransport/home/dataMall/SingaporeOpenDataLicence.html
+  version: 0.1.0
+servers:
+  - url: http://datamall2.mytransport.sg/ltaodataservice
+externalDocs:
+  description: Official LTA DataMall API documentation
+  url: https://www.mytransport.sg/content/dam/datamall/datasets/LTA_DataMall_API_User_Guide.pdf
+security:
+  - default: []
+paths:
+  "/BusArrivalv2":
+    get:
+      summary:
+        Returns real-time Bus Arrival information of Bus Services at a queried
+        Bus Stop, including Est. Arrival Time, Est. Current Location, Est. Current
+        Load.
+      parameters:
+        - "$ref": "#/components/parameters/accepts"
+        - name: BusStopCode
+          in: query
+          required: true
+          schema:
+            description: Bus stop reference code.
+            type: string
+            pattern: "[0-9]{5}"
+            example: "83139"
+        - name: ServiceNo
+          in: query
+          schema:
+            description: Bus service number.
+            type: integer
+            example: 15
+      responses:
+        "200":
+          description: A list of bus arrivals.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  Services:
+                    description: List of active bus services in operation.
+                    type: array
+                    items:
+                      description: Active bus service in operation.
+                      type: object
+                      properties:
+                        ServiceNo:
+                          description: Bus service number.
+                          type: string
+                        Operator:
+                          description: |-
+                            Public transport operator code.
+                            * SBST (for SBS Transit)
+                            * SMRT (for SMRT Corporation)
+                            * TTS (for Tower Transit Singapore)
+                            * GAS (for Go Ahead Singapore)
+                          enum:
+                            - SBST
+                            - SMRT
+                            - TTS
+                            - GAS
+                        NextBus:
+                          "$ref": "#/components/schemas/busArrivalv2NextBus"
+                        NextBus2:
+                          "$ref": "#/components/schemas/busArrivalv2NextBus"
+                        NextBus3:
+                          "$ref": "#/components/schemas/busArrivalv2NextBus"
+                additionalProperties: false
+        "400":
+          "$ref": "#/components/responses/default"
+        "401":
+          "$ref": "#/components/responses/401"
+        "501":
+          description:
+            501 Internal server error is returned when invalid/no BusStopCode
+            is sent.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  odata.metadata:
+                    type: string
+                    enum:
+                      - http://datamall2.mytransport.sg/ltaodataservice/$metadata#BusArrivalv2/@Element
+                  BusStopCode:
+                    type: string
+                    nullable: true
+                  Services:
+                    type: array
+                    items: {}
+                additionalProperties: false
+  "/BusServices":
+    get:
+      summary:
+        "Returns detailed service information for all buses currently in operation,
+        including: first stop, last stop, peak / offpeak frequency of dispatch."
+      parameters:
+        - "$ref": "#/components/parameters/accepts"
+      responses:
+        "200":
+          description: List of bus services.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ServiceNo:
+                    description: The bus service number.
+                    type: string
+                    example: 107M
+                  Operator:
+                    description: OPerator for this bus service.
+                    type: string
+                    example: SBST
+                  Direction:
+                    description: Thee direction in which the bus travels (1 or 2), loop services only have 1 direction.
+                    type: integer
+                    enum:
+                      - 1
+                      - 2
+                    example: 1
+                  Category:
+                    description: Categoru of the SBS bus service.
+                    type: string
+                    enum:
+                      - EXPRESS
+                      - FEEDER
+                      - INDUSTRIAL
+                      - TOWNLINK
+                      - TRUNK
+                      - 2 TIER FLAT FEE
+                      - FLAT FEE $1.10
+                      - FLAT FEE $1.90
+                      - FLAT FEE $3.50
+                      - FLAT FEE $3.80
+                    example: TRUNK
+                  OriginCode:
+                    description: Bus stop code for first bus stop
+                    type: integer
+                    pattern: "[0-9]{5}"
+                    example: "64009"
+                  DestinationCode:
+                    description: Bus stop code for last bus stop (similar as first stop for loop services)
+                    type: integer
+                    pattern: "[0-9]{5}"
+                    example: 64009
+                  AM_Peak_Freq:
+                    description: Frequency of dispatch for A.M. peak 0630 hrs - 0830 hrs (range in minutes).
+                    type: string
+                    example: "13-17"
+                  AM_Offpeak_Freq:
+                    description: Frequency of dispatch for A.M. Off-Peak 1700 hrs - 1900 hrs (range in minutes).
+                    type: string
+                    example: "10-16"
+                  PM_Peak_Freq:
+                    description: Frequency of dispatch for P.M. peak 1700 hrs - 1900 hrs (range in minutes).
+                    type: string
+                    example: "12-15"
+                  PM_Offpeak_Freq:
+                    description: Frequency of dispatch for P.M. Off-Peak after 1900 hrs (range in minutes).
+                    type: string
+                    example: "12-15"
+                  LoopDesc:
+                    description: Location at which the bus service loops; empty if not a loop service.
+                    type: string
+                    example: "Raffles Blvd"
+
+components:
+  parameters:
+    accepts:
+      name: accepts
+      in: header
+      description:
+        The response format of the API call. Any invalid value will fallback
+        to 'application/json'.
+      schema:
+        type: string
+        enum:
+          - application/json
+          - application/atom+xml
+        default: application/json
+  responses:
+    "401":
+      description: 401 Unauthorized is returned.
+      content:
+        text/plain:
+          schema:
+            additionalProperties: false
+    default:
+      description: 400 Bad request is returned.
+      content:
+        text/plain:
+          schema:
+            additionalProperties: false
+  securitySchemes:
+    default:
+      type: apiKey
+      name: AccountKey
+      in: header
+  schemas:
+    busArrivalv2NextBus:
+      type: object
+      properties:
+        OriginCode:
+          description:
+            Reference code of the first bus stop where this bus started
+            its service.
+          type: integer
+          pattern: "[0-9]{5}"
+          example: "77009"
+        DestinationCode:
+          description:
+            Reference code of the last bus stop where this bus will terminate
+            its service.
+          type: string
+          pattern: "[0-9]{5}"
+          example: "77131"
+        EstimatedArrival:
+          description:
+            Date-time of this bus' estimated time of arrival, expressed
+            in the UTC standard, GMT+8 for Singapore Standard Time (SST).
+          type: string
+          format: date-time
+          example: "2017-04-29T07:20:24+08:00"
+        Latitude:
+          description:
+            Current estimated latitude of this bus at point of published
+            data.
+          type: number
+          format: double
+          example: "1.42117943692586"
+        Longitude:
+          description:
+            Current estimated longitude of this bus at point of published
+            data.
+          type: number
+          format: double
+          example: "103.831477233098"
+        VisitNumber:
+          description:
+            Ordinal value of the nth visit of this vehicle at this bus
+            stop, 1 = 1st visit, 2 = 2nd visit.
+          type: integer
+          example: "1"
+        Load:
+          description: |-
+            Current bus occupancy / crowding level.
+            * SEA (for Seats Available)
+            * DD (for Double Deck)
+            * BD (for Bendy)
+          type: string
+          enum:
+            - SEA
+            - SDA
+            - LSD
+          example: SEA
+        Feature:
+          description: Indicates if the bus is wheelchair accessible.
+          type: string
+          enum:
+            - ""
+            - WAB
+          example: WAB
+        Type:
+          description: Vehicle type.
+          type: string
+          enum:
+            - SD
+            - DD
+            - BD
+          example: SD
+      additionalProperties: false

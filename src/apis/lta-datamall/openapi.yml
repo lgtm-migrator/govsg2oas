@@ -2,7 +2,8 @@
 openapi: 3.0.2
 info:
   title: LTA DataMall
-  description: LTA publishes a wide variety of land transport-related datasets (static
+  description:
+    LTA publishes a wide variety of land transport-related datasets (static
     and dynamic / real-time) on DataMall for enterprises, third-party developers,
     researchers, and other members of the public to promote collaboration and co-creation
     of innovative and inclusive transport solutions.
@@ -12,36 +13,37 @@ info:
     url: https://www.mytransport.sg/content/mytransport/home/dataMall/SingaporeOpenDataLicence.html
   version: 0.1.0
 servers:
-- url: http://datamall2.mytransport.sg/ltaodataservice
+  - url: http://datamall2.mytransport.sg/ltaodataservice
 externalDocs:
   description: Official LTA DataMall API documentation
   url: https://www.mytransport.sg/content/dam/datamall/datasets/LTA_DataMall_API_User_Guide.pdf
 security:
-- default: []
+  - default: []
 paths:
   "/BusArrivalv2":
     get:
-      summary: Returns real-time Bus Arrival information of Bus Services at a queried
+      summary:
+        Returns real-time Bus Arrival information of Bus Services at a queried
         Bus Stop, including Est. Arrival Time, Est. Current Location, Est. Current
         Load.
       parameters:
-      - "$ref": "#/components/headers/accepts"
-      - name: BusStopCode
-        in: query
-        required: true
-        schema:
-          description: Bus stop reference code.
-          type: string
-          pattern: "[0-9]{5}"
-          example: '83139'
-      - name: ServiceNo
-        in: query
-        schema:
-          description: Bus service number.
-          type: integer
-          example: '15'
+        - "$ref": "#/components/headers/accepts"
+        - name: BusStopCode
+          in: query
+          required: true
+          schema:
+            description: Bus stop reference code.
+            type: string
+            pattern: "[0-9]{5}"
+            example: "83139"
+        - name: ServiceNo
+          in: query
+          schema:
+            description: Bus service number.
+            type: integer
+            example: "15"
       responses:
-        '200':
+        "200":
           description: A list of bus arrivals.
           content:
             application/json:
@@ -66,10 +68,10 @@ paths:
                             * TTS (for Tower Transit Singapore)
                             * GAS (for Go Ahead Singapore)
                           enum:
-                          - SBST
-                          - SMRT
-                          - TTS
-                          - GAS
+                            - SBST
+                            - SMRT
+                            - TTS
+                            - GAS
                         NextBus:
                           "$ref": "#/components/schemas/busArrivalv2NextBus"
                         NextBus2:
@@ -77,12 +79,13 @@ paths:
                         NextBus3:
                           "$ref": "#/components/schemas/busArrivalv2NextBus"
                 additionalProperties: false
-        '400':
+        "400":
           "$ref": "#/components/responses/default"
-        '401':
-          "$ref": "#components/responses/401"
-        '501':
-          description: 501 Internal server error is returned when invalid/no BusStopCode
+        "401":
+          "$ref": "#/components/responses/401"
+        "501":
+          description:
+            501 Internal server error is returned when invalid/no BusStopCode
             is sent.
           content:
             application/json:
@@ -92,7 +95,7 @@ paths:
                   odata.metadata:
                     type: string
                     enum:
-                    - http://datamall2.mytransport.sg/ltaodataservice/$metadata#BusArrivalv2/@Element
+                      - http://datamall2.mytransport.sg/ltaodataservice/$metadata#BusArrivalv2/@Element
                   BusStopCode:
                     type: string
                     nullable: true
@@ -102,12 +105,13 @@ paths:
                 additionalProperties: false
   "/BusServices":
     get:
-      summary: 'Returns detailed service information for all buses currently in operation,
-        including: first stop, last stop, peak / offpeak frequency of dispatch.'
+      summary:
+        "Returns detailed service information for all buses currently in operation,
+        including: first stop, last stop, peak / offpeak frequency of dispatch."
       parameters:
-      - "$ref": "#/components/headers/accepts"
+        - "$ref": "#/components/headers/accepts"
       responses:
-        '200':
+        "200":
           description: List of bus services.
           content:
             application/json:
@@ -123,16 +127,17 @@ paths:
 components:
   headers:
     accepts:
-      description: The response format of the API call. Any invalid value will fallback
+      description:
+        The response format of the API call. Any invalid value will fallback
         to 'application/json'.
       schema:
         type: string
         enum:
-        - application/json
-        - application/atom+xml
+          - application/json
+          - application/atom+xml
         default: application/json
   responses:
-    '401':
+    "401":
       description: 401 Unauthorized is returned.
       content:
         text/plain:
@@ -154,40 +159,46 @@ components:
       type: object
       properties:
         OriginCode:
-          description: Reference code of the first bus stop where this bus started
+          description:
+            Reference code of the first bus stop where this bus started
             its service.
           type: string
           pattern: "[0-9]{5}"
-          example: '77009'
+          example: "77009"
         DestinationCode:
-          description: Reference code of the last bus stop where this bus will terminate
+          description:
+            Reference code of the last bus stop where this bus will terminate
             its service.
           type: string
           pattern: "[0-9]{5}"
-          example: '77131'
+          example: "77131"
         EstimatedArrival:
-          description: Date-time of this bus' estimated time of arrival, expressed
+          description:
+            Date-time of this bus' estimated time of arrival, expressed
             in the UTC standard, GMT+8 for Singapore Standard Time (SST).
           type: string
           format: date-time
-          example: '2017-04-29T07:20:24+08:00'
+          example: "2017-04-29T07:20:24+08:00"
         Latitude:
-          description: Current estimated latitude of this bus at point of published
+          description:
+            Current estimated latitude of this bus at point of published
             data.
           type: number
           format: double
-          example: '1.42117943692586'
+          example: "1.42117943692586"
         Longitude:
-          description: Current estimated longitude of this bus at point of published
+          description:
+            Current estimated longitude of this bus at point of published
             data.
           type: number
           format: double
-          example: '103.831477233098'
+          example: "103.831477233098"
         VisitNumber:
-          description: Ordinal value of the nth visit of this vehicle at this bus
+          description:
+            Ordinal value of the nth visit of this vehicle at this bus
             stop, 1 = 1st visit, 2 = 2nd visit.
           type: integer
-          example: '1'
+          example: "1"
         Load:
           description: |-
             Current bus occupancy / crowding level.
@@ -196,23 +207,23 @@ components:
             * BD (for Bendy)
           type: string
           enum:
-          - SEA
-          - SDA
-          - LSD
+            - SEA
+            - SDA
+            - LSD
           example: SEA
         Feature:
           description: Indicates if the bus is wheelchair accessible.
           type: string
           enum:
-          - ''
-          - WAB
+            - ""
+            - WAB
           example: WAB
         Type:
           description: Vehicle type.
           type: string
           enum:
-          - SD
-          - DD
-          - BD
+            - SD
+            - DD
+            - BD
           example: SD
       additionalProperties: false

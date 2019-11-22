@@ -7,9 +7,11 @@
     "cm": "git-cz -s",
     "test": "gulp",
     "lint:check": "npm run prettier:check",
+    "lint:check:lint-staged": "npm run prettier:check:lint-staged",
     "lint:fix": "npm run prettier:fix",
-    "prettier:check": "prettier --check",
-    "prettier:fix": "prettier --write"
+    "prettier:check": "prettier --check src/apis/**/*.yml",
+    "prettier:check:lint-staged": "prettier --check",
+    "prettier:fix": "prettier --write src/apis/**/*.yml"
   },
   "husky": {
     "hooks": {
@@ -19,7 +21,7 @@
     }
   },
   "lint-staged": {
-    "src/apis/**/*.yml": "npm run lint:check"
+    "src/apis/**/*.yml": "npm run lint:check:lint-staged"
   },
   "repository": {
     "type": "git",

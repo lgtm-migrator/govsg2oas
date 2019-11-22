@@ -27,7 +27,7 @@ paths:
         Bus Stop, including Est. Arrival Time, Est. Current Location, Est. Current
         Load.
       parameters:
-        - "$ref": "#/components/headers/accepts"
+        - "$ref": "#/components/parameters/accepts"
         - name: BusStopCode
           in: query
           required: true
@@ -41,7 +41,7 @@ paths:
           schema:
             description: Bus service number.
             type: integer
-            example: "15"
+            example: 15
       responses:
         "200":
           description: A list of bus arrivals.
@@ -109,7 +109,7 @@ paths:
         "Returns detailed service information for all buses currently in operation,
         including: first stop, last stop, peak / offpeak frequency of dispatch."
       parameters:
-        - "$ref": "#/components/headers/accepts"
+        - "$ref": "#/components/parameters/accepts"
       responses:
         "200":
           description: List of bus services.
@@ -119,14 +119,71 @@ paths:
                 type: object
                 properties:
                   ServiceNo:
+                    description: The bus service number.
                     type: string
                     example: 107M
                   Operator:
+                    description: OPerator for this bus service.
                     type: string
                     example: SBST
+                  Direction:
+                    description: Thee direction in which the bus travels (1 or 2), loop services only have 1 direction.
+                    type: integer
+                    enum:
+                      - 1
+                      - 2
+                    example: 1
+                  Category:
+                    description: Categoru of the SBS bus service.
+                    type: string
+                    enum:
+                      - EXPRESS
+                      - FEEDER
+                      - INDUSTRIAL
+                      - TOWNLINK
+                      - TRUNK
+                      - 2 TIER FLAT FEE
+                      - FLAT FEE $1.10
+                      - FLAT FEE $1.90
+                      - FLAT FEE $3.50
+                      - FLAT FEE $3.80
+                    example: TRUNK
+                  OriginCode:
+                    description: Bus stop code for first bus stop
+                    type: integer
+                    pattern: "[0-9]{5}"
+                    example: "64009"
+                  DestinationCode:
+                    description: Bus stop code for last bus stop (similar as first stop for loop services)
+                    type: integer
+                    pattern: "[0-9]{5}"
+                    example: 64009
+                  AM_Peak_Freq:
+                    description: Frequency of dispatch for A.M. peak 0630 hrs - 0830 hrs (range in minutes).
+                    type: string
+                    example: "13-17"
+                  AM_Offpeak_Freq:
+                    description: Frequency of dispatch for A.M. Off-Peak 1700 hrs - 1900 hrs (range in minutes).
+                    type: string
+                    example: "10-16"
+                  PM_Peak_Freq:
+                    description: Frequency of dispatch for P.M. peak 1700 hrs - 1900 hrs (range in minutes).
+                    type: string
+                    example: "12-15"
+                  PM_Offpeak_Freq:
+                    description: Frequency of dispatch for P.M. Off-Peak after 1900 hrs (range in minutes).
+                    type: string
+                    example: "12-15"
+                  LoopDesc:
+                    description: Location at which the bus service loops; empty if not a loop service.
+                    type: string
+                    example: "Raffles Blvd"
+
 components:
-  headers:
+  parameters:
     accepts:
+      name: accepts
+      in: header
       description:
         The response format of the API call. Any invalid value will fallback
         to 'application/json'.
@@ -162,7 +219,7 @@ components:
           description:
             Reference code of the first bus stop where this bus started
             its service.
-          type: string
+          type: integer
           pattern: "[0-9]{5}"
           example: "77009"
         DestinationCode:

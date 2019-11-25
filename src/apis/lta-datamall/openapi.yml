@@ -27,6 +27,7 @@ paths:
         Bus Stop, including Est. Arrival Time, Est. Current Location, Est. Current
         Load.
       parameters:
+        - "$ref": "#/components/parameters/skip"
         - "$ref": "#/components/parameters/accept"
         - name: BusStopCode
           in: query
@@ -43,7 +44,7 @@ paths:
             type: integer
             example: 15
       responses:
-        "200":
+        200:
           description: A list of bus arrivals.
           content:
             application/json:
@@ -66,17 +67,7 @@ paths:
                           description: Bus service number.
                           type: string
                         Operator:
-                          description: |-
-                            Public transport operator code.
-                            * SBST (for SBS Transit)
-                            * SMRT (for SMRT Corporation)
-                            * TTS (for Tower Transit Singapore)
-                            * GAS (for Go Ahead Singapore)
-                          enum:
-                            - SBST
-                            - SMRT
-                            - TTS
-                            - GAS
+                          "$ref": "#/components/schemas/busOperator"
                         NextBus:
                           "$ref": "#/components/schemas/busArrivalv2NextBus"
                         NextBus2:
@@ -84,9 +75,9 @@ paths:
                         NextBus3:
                           "$ref": "#/components/schemas/busArrivalv2NextBus"
                 additionalProperties: false
-        "400":
+        400:
           "$ref": "#/components/responses/default"
-        "401":
+        401:
           "$ref": "#/components/responses/401"
         "501":
           description:
@@ -115,9 +106,10 @@ paths:
         "Returns detailed service information for all buses currently in operation,
         including: first stop, last stop, peak / offpeak frequency of dispatch."
       parameters:
+        - "$ref": "#/components/parameters/skip"
         - "$ref": "#/components/parameters/accept"
       responses:
-        "200":
+        200:
           description: List of bus services.
           content:
             application/json:
@@ -197,10 +189,197 @@ paths:
                           description: Location at which the bus service loops; empty if not a loop service.
                           type: string
                           example: "Raffles Blvd"
-        "400":
+        400:
           "$ref": "#/components/responses/default"
-        "401":
+        401:
           "$ref": "#/components/responses/401"
+  "/BusRoutes":
+    get:
+      summary: "Returns detailed route information for all services currently in operation, including: all bus stops along each route, first/last bus timings for each stop."
+      parameters:
+        - "$ref": "#/components/parameters/skip"
+        - "$ref": "#/components/parameters/accept"
+      responses:
+        200:
+          description: List of bus routes.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  odata.metadata:
+                    type: string
+                    enum:
+                      - http://datamall2.mytransport.sg/ltaodataservice/$metadataBusRoutes
+                    example: http://datamall2.mytransport.sg/ltaodataservice/$metadataBusRoutes
+                  values:
+                    description: List of bus routes.
+                    type: array
+                    items:
+                      description: A bus route.
+                      type: object
+                      properties:
+                        ServiceNo:
+                          description: The bus service number
+                          type: string
+                          example: 107M
+                        Operator:
+                          "$ref": "#/components/schemas/busOperator"
+        400:
+          "$ref": "#/components/responses/default"
+  "/BusStops":
+    get:
+      summary: "Returns detailed information for all bus stops currently being serviced by buses, including: Bus Stop Code,location coordinates"
+      parameters:
+        - "$ref": "#/components/parameters/skip"
+        - "$ref": "#/components/parameters/accept"
+      responses:
+        200:
+          description: List of bus stops.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  odata.metadata:
+                    type: string
+                    enum:
+                      - http://datamall2.mytransport.sg/ltaodataservice/$metadata#BusStops
+                    example: http://datamall2.mytransport.sg/ltaodataservice/$metadata#BusStops
+                  value:
+                    description: List of bus stops.
+                    type: array
+                    items:
+                      description: A bus stop.
+                      type: object
+                      properties:
+                        BusStopCode:
+                          description: The unique 5-digit identifier for this physical bus stop.
+                          type: string
+                          example: 01012
+                        RoadName:
+                          description: The road on which this bus stop is located.
+                          type: string
+                          example: Victoria St
+                        Description:
+                          description: Landmarks next to the bus sotp (if any) to aid in identifying this bus stop.
+                          type: string
+                          example: Hotel Grand Pacific
+                        Latitude:
+                          description: Latitude for this bus stop.
+                          type: number
+                          format: double
+                        Longitude:
+                          description: Longitude of this bus stop.
+                          type: number
+                          format: double
+        400:
+          "$ref": "#/components/responses/default"
+  "/PV/Bus":
+    get:
+      summary: Returns tap in and tap outpassenger volumeby weekdays and weekends for individual bus stop
+      parameters:
+        - "$ref": "#/components/parameters/accept"
+        - name: Date
+          in: query
+          description: Request for files up to last three months.
+          schema:
+            type: string
+            example: 201803
+      responses:
+        200:
+          description: List containing one Link object.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  odata.metadata:
+                    type: string
+                    enum:
+                      - http://datamall2.mytransport.sg/ltaodataservice/$metadata#FarecardBatch
+                    example: http://datamall2.mytransport.sg/ltaodataservice/$metadata#FarecardBatch
+                  value:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        Link:
+                          description: Link for downloading the file. Expires after 5 minutes.
+                          type: string
+                          example: https://ltafarecard.s3.amazonaws.com/201803/transport_node_bus_201803.zip?x-amz-security-token=FQoDYXdzEOf%2F%2F%2F%2F%2F%2F%2F%2F%2F%...
+        400:
+          "$ref": "#/components/responses/default"
+  "/PV/ODBus":
+    get:
+      summary: Returns number of trips by weekdays and weekends from origin to destination bus stops.
+      parameters:
+        - "$ref": "#/components/parameters/accept"
+        - name: Date
+          in: query
+          description: Request for files up to last three months.
+          schema:
+            type: string
+            example: 201803
+      responses:
+        200:
+          description: List containing one Link object.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  odata.metadata:
+                    type: string
+                    enum:
+                      - http://datamall2.mytransport.sg/ltaodataservice/$metadata#FarecardBatch
+                    example: http://datamall2.mytransport.sg/ltaodataservice/$metadata#FarecardBatch
+                  value:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        Link:
+                          description: Link for downloading this file. Expires after 5 minutes.
+                          type: string
+                          example: https://ltafarecard.s3.amazonaws.com/201804/origin_destination_bus_201804.zip?x-amz-security-token=FQoDYXdzEOf%2F%2...
+        400:
+          "$ref": "#/components/responses/default"
+  "/PV/ODTrain":
+    get:
+      summary: Returns number of trips by weekdays and weekends from origin to destination train stations.
+      parameters:
+        - "$ref": "#/components/parameters/accept"
+        - name: Date
+          in: query
+          description: Request for files up to last three months.
+          schema:
+            type: string
+            example: 201803
+      responses:
+        200:
+          description: List containing one Link object.
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties: false
+                properties:
+                  value:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        Link:
+                          description: Link for downloading this file. Expires after 5 minutes.
+                          type: string
+                          example: "https://ltafarecard.s3.amazonaws.com/201803/origin_destination_train_201803.zip?x-amz-security-token=FQoDYXdzEOf%2F%2F%..."
+        400:
+          "$ref": "#/components/responses/default"
 components:
   parameters:
     accept:
@@ -215,8 +394,21 @@ components:
           - application/json
           - application/atom+xml
         default: application/json
+        example: application/json
+    skip:
+      name: $skip
+      in: query
+      description:
+        "With the exception of the following Bus Arrival API listed below, API responses returned are limited to 500 records of the dataset per call. This number may be adjusted from time to time. To retrieve the following set of 500 records, set $skip to 500.
+        Exempted APIs:
+        * Bus Arrival - Not applicable. Depends on parameter supplied.
+        * Train Service Alerts - Not applicable. Depends on the scenario.
+        * Passenger Volume related - Returns one record per request."
+      schema:
+        type: integer
+        example: 500
   responses:
-    "401":
+    401:
       description: 401 Unauthorized is returned.
       content:
         text/plain:
@@ -247,14 +439,14 @@ components:
             its service.
           type: integer
           pattern: "[0-9]{5}"
-          example: "77009"
+          example: 77009
         DestinationCode:
           description:
             Reference code of the last bus stop where this bus will terminate
             its service.
           type: string
           pattern: "[0-9]{5}"
-          example: "77131"
+          example: 77131
         EstimatedArrival:
           description:
             Date-time of this bus' estimated time of arrival, expressed
@@ -310,3 +502,16 @@ components:
             - BD
           example: SD
       additionalProperties: false
+    busOperator:
+      description: |-
+        Public transport operator code.
+        * SBST (for SBS Transit)
+        * SMRT (for SMRT Corporation)
+        * TTS (for Tower Transit Singapore)
+        * GAS (for Go Ahead Singapore)
+      type: string
+      enum:
+        - SBST
+        - SMRT
+        - TTS
+        - GAS

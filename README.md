@@ -12,6 +12,24 @@ The GovSG-2-OAS aims to document publicly-accessible government APIs into a well
 
 This is to encourage automatic code generation and increased readability of API documentation across government agencies.
 
+## FAQ
+
+### Can you add Data.gov.sg dynamic datasets?
+
+Currently no. There's already an [official OpenAPI Specification (OAS) 3.0.0](https://raw.githubusercontent.com/datagovsg/datagovsg-datasets/master/documentation/swagger.yml) for those datasets. If there's a new reason for us to maintain our own version (e.g. it's no longer maintained), then [open an issue](https://github.com/apprexp/govsg2oas/issues/new) so taht we can look into it.
+
+### Can you add X dataset?
+
+We're always open to accepting new datasets! [open a new issue](https://github.com/apprexp/govsg2oas/issues/new) and we'll take a look at it.
+
+### Why are you maintaining these?
+
+The mission of AppRExp is to develop tools to serve a purpose of making the lives of youths in Singapore better. We believe that this project will help us accomplish this goal.
+
+### How often will you update this?
+
+While we cannot make any guarantee, we promise it will be updated on a best-effort basis. We will usually respond to new issues within 3 days. Otherwise, you may reach out to [Rifa on Twitter](https://twitter.com/achrinza) whose spearheading the project.
+
 ## Contributors
 
 * [Rifa Achrinza](https://github.com/achrinza) (Main contributor)

@@ -45,7 +45,7 @@
     "lint-staged": "^9.4.3",
     "prettier": "^1.19.1",
     "pump": "^3.0.0",
-    "swagger-parser": "^8.0.3",
+    "swagger-parser": "^10.0.0",
     "ts-node": "^8.5.2",
     "typescript": "^3.7.2",
     "yaml": "^1.7.2"

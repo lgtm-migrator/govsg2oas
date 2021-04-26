@@ -53,7 +53,7 @@
   "devDependencies": {
     "@types/gulp": "4.0.6",
     "@types/node": "12.12.25",
-    "@types/pump": "1.1.0",
+    "@types/pump": "1.1.1",
     "@types/yaml": "1.2.0"
   },
   "config": {
